@@ -148,3 +148,13 @@ If so set your archflags during pip install. eg: _ARCHFLAGS="-arch x86_64" pip3 
 
 # Disclaimer
 This is a test project to validate the feasibility of a fully private solution for question answering using LLMs and Vector embeddings. It is not production ready, and it is not meant to be used in production. The models selection is not optimized for performance, but for privacy; but it is possible to use different models and vectorstores to improve performance.
+
+# Output Example
+Chat in Japanese.
+
+    > Question:
+    民主主義の戦いについて教えてください。
+    
+    > Answer (took 179.8 s.):
+    米国は常に世界中の自由と平等主義のリーダーでありてきました。しかし、社会における特定のグループ間での不当性や所得の不平等性などの自分の国でこれらの値を維持するという課題もあります。 移民の改革や犯罪正義の改革など、進捗状況が問題になる可能性 があることに注意することが重要です。, それは、政府のすべてのレベルで全身の危機に対して提唱し続け、より大きな善のために必要とされた場合、市民の不規則.
+
