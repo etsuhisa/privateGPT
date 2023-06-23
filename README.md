@@ -1,3 +1,5 @@
+This is a fork of the PrivateGPT project aimed at incorporating translation functionality using argostranslate package. 
+
 # privateGPT
 Ask questions to your documents without an internet connection, using the power of LLMs. 100% private, no data leaves your execution environment at any point. You can ingest documents and ask questions without an internet connection!
 
@@ -29,6 +31,14 @@ MODEL_N_CTX: Maximum token limit for the LLM model
 MODEL_N_BATCH: Number of tokens in the prompt that are fed into the model at a time. Optimal value differs a lot depending on the model (8 works well for GPT4All, and 1024 is better for LlamaCpp)
 EMBEDDINGS_MODEL_NAME: SentenceTransformers embeddings model name (see https://www.sbert.net/docs/pretrained_models.html)
 TARGET_SOURCE_CHUNKS: The amount of chunks (sources) that will be used to answer a question
+TRANSLATE_FROM_CODE: Specify the source language for translation
+TRANSLATE_TO_CODE: Specify the source language for translation
+```
+
+Install package of languages to be translated.
+
+```shell
+python argostranslate_package_install.py
 ```
 
 Note: because of the way `langchain` loads the `SentenceTransformers` embeddings, the first time you run the script it will require internet connection to download the embeddings model itself.

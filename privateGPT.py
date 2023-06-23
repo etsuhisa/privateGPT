@@ -8,6 +8,8 @@ from langchain.llms import GPT4All, LlamaCpp
 import os
 import argparse
 import time
+import argostranslate.package
+import argostranslate.translate
 
 load_dotenv()
 
@@ -19,6 +21,8 @@ model_path = os.environ.get('MODEL_PATH')
 model_n_ctx = os.environ.get('MODEL_N_CTX')
 model_n_batch = int(os.environ.get('MODEL_N_BATCH',8))
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
+translate_from_code = os.environ.get('TRANSLATE_FROM_CODE')
+translate_to_code = os.environ.get('TRANSLATE_TO_CODE')
 
 from constants import CHROMA_SETTINGS
 
@@ -51,8 +55,12 @@ def main():
 
         # Get the answer from the chain
         start = time.time()
-        res = qa(query)
-        answer, docs = res['result'], [] if args.hide_source else res['source_documents']
+        if translate_from_code and translate_to_code and translate_from_code != translate_to_code:
+            res = qa(argostranslate.translate.translate(query, translate_from_code, translate_to_code))
+            answer, docs = argostranslate.translate.translate(res['result'], translate_to_code, translate_from_code), [] if args.hide_source else res['source_documents']
+        else:
+            res = qa(query)
+            answer, docs = res['result'], [] if args.hide_source else res['source_documents']
         end = time.time()
 
         # Print the result
@@ -64,7 +72,10 @@ def main():
         # Print the relevant sources used for the answer
         for document in docs:
             print("\n> " + document.metadata["source"] + ":")
-            print(document.page_content)
+            if translate_from_code and translate_to_code and translate_from_code != translate_to_code:
+                print(argostranslate.translate.translate(document.page_content, translate_to_code, translate_from_code))
+            else:
+                print(document.page_content)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='privateGPT: Ask questions to your documents without an internet connection, '

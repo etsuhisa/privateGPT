@@ -25,6 +25,8 @@ from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from constants import CHROMA_SETTINGS
+import argostranslate.package
+import argostranslate.translate
 
 
 load_dotenv()
@@ -34,6 +36,8 @@ load_dotenv()
 persist_directory = os.environ.get('PERSIST_DIRECTORY')
 source_directory = os.environ.get('SOURCE_DIRECTORY', 'source_documents')
 embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME')
+translate_from_code = os.environ.get('TRANSLATE_FROM_CODE')
+translate_to_code = os.environ.get('TRANSLATE_TO_CODE')
 chunk_size = 500
 chunk_overlap = 50
 
@@ -86,7 +90,11 @@ def load_single_document(file_path: str) -> List[Document]:
     if ext in LOADER_MAPPING:
         loader_class, loader_args = LOADER_MAPPING[ext]
         loader = loader_class(file_path, **loader_args)
-        return loader.load()
+        docs = loader.load()
+        if translate_from_code and translate_to_code and translate_from_code != translate_to_code:
+            for doc in docs:
+                doc.page_content = argostranslate.translate.translate(doc.page_content, translate_from_code, translate_to_code)
+        return docs
 
     raise ValueError(f"Unsupported file extension '{ext}'")
 
