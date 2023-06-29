@@ -1,4 +1,4 @@
-This is a fork of the PrivateGPT project aimed at incorporating translation functionality using argostranslate package. 
+This is a fork of the PrivateGPT project aimed at working with Japanese.
 
 # privateGPT
 Ask questions to your documents without an internet connection, using the power of LLMs. 100% private, no data leaves your execution environment at any point. You can ingest documents and ask questions without an internet connection!
@@ -24,15 +24,16 @@ cp example.env .env
 
 and edit the variables appropriately in the `.env` file.
 ```
-MODEL_TYPE: supports LlamaCpp or GPT4All
+MODEL_TYPE: supports LlamaCpp, GPT4All or HuggingFace
 PERSIST_DIRECTORY: is the folder you want your vectorstore in
-MODEL_PATH: Path to your GPT4All or LlamaCpp supported LLM
+MODEL_PATH: Path to your GPT4All or LlamaCpp supported LLM, or a model id on HuggingFace
 MODEL_N_CTX: Maximum token limit for the LLM model
 MODEL_N_BATCH: Number of tokens in the prompt that are fed into the model at a time. Optimal value differs a lot depending on the model (8 works well for GPT4All, and 1024 is better for LlamaCpp)
 EMBEDDINGS_MODEL_NAME: SentenceTransformers embeddings model name (see https://www.sbert.net/docs/pretrained_models.html)
 TARGET_SOURCE_CHUNKS: The amount of chunks (sources) that will be used to answer a question
 TRANSLATE_FROM_CODE: Specify the source language for translation
 TRANSLATE_TO_CODE: Specify the source language for translation
+MAX_NEW_TOKENS: The amount of maximum tokens to generate on HuggingFace pipeline
 ```
 
 Install package of languages to be translated.
