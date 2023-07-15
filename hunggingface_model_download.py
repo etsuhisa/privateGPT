@@ -15,7 +15,8 @@ if model_type != "HuggingFace":
 
 print("Download")
 snapshot_download(repo_id=model_path, revision="main", local_dir="models/"+model_path, local_dir_use_symlinks=False)
-snapshot_download(repo_id=embeddings_model_name, revision="main", local_dir="models/"+embeddings_model_name, local_dir_use_symlinks=False)
+if model_path != embeddings_model_name:
+    snapshot_download(repo_id=embeddings_model_name, revision="main", local_dir="models/"+embeddings_model_name, local_dir_use_symlinks=False)
 
 print("Load Test")
 tokenizer = AutoTokenizer.from_pretrained("models/"+model_path)
