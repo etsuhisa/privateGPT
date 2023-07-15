@@ -6,9 +6,11 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.vectorstores import Chroma
 from langchain.llms import GPT4All, LlamaCpp, HuggingFacePipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+import torch
 import os
 import argparse
 import time
+import ast
 import argostranslate.package
 import argostranslate.translate
 
@@ -24,7 +26,10 @@ model_n_batch = int(os.environ.get('MODEL_N_BATCH',8))
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 translate_from_code = os.environ.get('TRANSLATE_FROM_CODE')
 translate_to_code = os.environ.get('TRANSLATE_TO_CODE')
-max_new_tokens = int(os.environ.get('MAX_NEW_TOKENS',64))
+transformers_offline = os.environ.get('TRANSFORMERS_OFFLINE')
+if transformers_offline == "1":
+    embeddings_model_name = "models/" + embeddings_model_name
+    model_path = "models/" + model_path
 
 from constants import CHROMA_SETTINGS
 
@@ -43,16 +48,18 @@ def main():
         case "GPT4All":
             llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', n_batch=model_n_batch, callbacks=callbacks, verbose=False)
         case "HuggingFace":
-            model = AutoModelForCausalLM.from_pretrained(model_path, local_files_only=True)
             tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-            pipe = pipeline(
-                "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=max_new_tokens
-            )
+            model = AutoModelForCausalLM.from_pretrained(model_path, local_files_only=True)
+            pipeline_params = {"task":"text-generation", "model":model, "tokenizer":tokenizer,
+                "max_new_tokens":32, "framework":"pt",
+                "pad_token_id":tokenizer.pad_token_id, "bos_token_id":tokenizer.bos_token_id, "eos_token_id":tokenizer.eos_token_id}
+            if os.environ.get('PIPELINE_PARAMS'):
+                pipeline_params.update(ast.literal_eval(os.environ.get('PIPELINE_PARAMS')))
+            pipe = pipeline(**pipeline_params)
             llm = HuggingFacePipeline(pipeline=pipe)
         case _default:
             # raise exception if model_type is not supported
             raise Exception(f"Model type {model_type} is not supported. Please choose one of the following: LlamaCpp, GPT4All")
-        
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents= not args.hide_source)
     # Interactive questions and answers
     while True:

@@ -38,6 +38,10 @@ source_directory = os.environ.get('SOURCE_DIRECTORY', 'source_documents')
 embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME')
 translate_from_code = os.environ.get('TRANSLATE_FROM_CODE')
 translate_to_code = os.environ.get('TRANSLATE_TO_CODE')
+transformers_offline = os.environ.get('TRANSFORMERS_OFFLINE')
+if transformers_offline == "1":
+    embeddings_model_name = "models/" + embeddings_model_name
+
 chunk_size = 500
 chunk_overlap = 50
 
