@@ -13,12 +13,19 @@ embeddings_model_name = os.environ.get("EMBEDDINGS_MODEL_NAME")
 if model_type != "HuggingFace":
     exit(0)
 
-print("Download")
-snapshot_download(repo_id=model_path, revision="main", local_dir="models/"+model_path, local_dir_use_symlinks=False)
-if model_path != embeddings_model_name:
-    snapshot_download(repo_id=embeddings_model_name, revision="main", local_dir="models/"+embeddings_model_name, local_dir_use_symlinks=False)
+if not os.path.exists("models/"+model_path):
+    print("Download Model : "+model_path)
+    snapshot_download(repo_id=model_path, revision="main", local_dir="models/"+model_path, local_dir_use_symlinks=False)
+    print("Load Test : "+model_path)
+    tokenizer = AutoTokenizer.from_pretrained("models/"+model_path)
+    model = AutoModelForCausalLM.from_pretrained("models/"+model_path)
+else:
+    print("Model Already Downloaded : "+model_path)
 
-print("Load Test")
-tokenizer = AutoTokenizer.from_pretrained("models/"+model_path)
-model = AutoModelForCausalLM.from_pretrained("models/"+model_path)
-embeddings = HuggingFaceEmbeddings(model_name="models/"+embeddings_model_name)
+if not os.path.exists("models/"+embeddings_model_name):
+    print("Download Embeddings : "+embeddings_model_name)
+    snapshot_download(repo_id=embeddings_model_name, revision="main", local_dir="models/"+embeddings_model_name, local_dir_use_symlinks=False)
+    print("Load Test : "+embeddings_model_name)
+    embeddings = HuggingFaceEmbeddings(model_name="models/"+embeddings_model_name)
+else:
+    print("Embeddings Already Downloaded : "+embeddings_model_name)
