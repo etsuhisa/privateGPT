@@ -28,8 +28,10 @@ translate_from_code = os.environ.get('TRANSLATE_FROM_CODE')
 translate_to_code = os.environ.get('TRANSLATE_TO_CODE')
 transformers_offline = os.environ.get('TRANSFORMERS_OFFLINE')
 if transformers_offline == "1":
-    embeddings_model_name = "models/" + embeddings_model_name
-    model_path = "models/" + model_path
+    if os.path.exists("models/" + embeddings_model_name):
+        embeddings_model_name = "models/" + embeddings_model_name
+    if os.path.exists("models/" + model_path):
+        model_path = "models/" + model_path
 
 from constants import CHROMA_SETTINGS
 
