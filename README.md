@@ -68,6 +68,14 @@ The supported extensions are:
    - `.ppt` : PowerPoint Document,
    - `.txt`: Text file (UTF-8),
 
+If an error occurs in nltk/downloader.py, use the following command to download the package.
+
+```python
+import nltk
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+```
+
 Run the following command to ingest all the data.
 
 ```shell
