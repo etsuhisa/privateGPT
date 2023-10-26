@@ -52,6 +52,8 @@ def main():
         case "HuggingFace":
             tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
             model = AutoModelForCausalLM.from_pretrained(model_path, local_files_only=True)
+            #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            #model = model.to(device)
             pipeline_params = {"task":"text-generation", "model":model, "tokenizer":tokenizer,
                 "max_new_tokens":32, "framework":"pt",
                 "pad_token_id":tokenizer.pad_token_id, "bos_token_id":tokenizer.bos_token_id, "eos_token_id":tokenizer.eos_token_id}
@@ -61,7 +63,7 @@ def main():
             llm = HuggingFacePipeline(pipeline=pipe)
         case _default:
             # raise exception if model_type is not supported
-            raise Exception(f"Model type {model_type} is not supported. Please choose one of the following: LlamaCpp, GPT4All")
+            raise Exception(f"Model type {model_type} is not supported. Please choose one of the following: LlamaCpp, GPT4All, HuggingFace")
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents= not args.hide_source)
     # Interactive questions and answers
     while True:
